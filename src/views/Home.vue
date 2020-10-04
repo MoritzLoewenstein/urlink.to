@@ -1,6 +1,4 @@
 <template>
-  <animation></animation>
-
   <div id="clipboard-ui-wrapper" v-if="clipboardSupported">
     <button @click="clipboardShorten">
       shorten in clipboard
@@ -23,14 +21,10 @@
 </template>
 
 <script>
-import animation from "@/components/animation.vue";
 import normalizeUrl from "normalize-url";
 
 export default {
-  name: "UrlShorten",
-  components: {
-    animation
-  },
+  name: "Home",
   computed: {
     clipboardSupported: () =>
       navigator && navigator.clipboard && navigator.clipboard.readText

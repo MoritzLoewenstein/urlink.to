@@ -1,6 +1,4 @@
 <template>
-  <animation></animation>
-
   <div id="error-msg-wrapper">
     <p>error occured while redirecting</p>
     <router-link to="/">shorten url</router-link>
@@ -8,12 +6,9 @@
 </template>
 
 <script>
-import animation from "@/components/animation.vue";
 export default {
   name: "Error",
-  components: {
-    animation
-  },
+  components: {},
   data() {
     return {
       errorMsg: ""
