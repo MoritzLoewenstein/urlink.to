@@ -1,15 +1,13 @@
 <template>
-  <div id="loading-wrapper">
-    <div v-for="n in 5" :key="n" :id="`loading-screen-${n}`" />
-  </div>
+  <animation></animation>
 
-  <div id="clipboard-ui-wrapper" v-if="!loading && clipboardSupported">
+  <div id="clipboard-ui-wrapper" v-if="clipboardSupported">
     <button @click="clipboardShorten">
       shorten in clipboard
     </button>
     <p>{{ msgClip }}</p>
   </div>
-  <div id="form-ui-wrapper" v-if="!loading">
+  <div id="form-ui-wrapper">
     <input type="url" id="url" v-model="urlForm" placeholder="example.org" />
     <button @click="formShorten">
       1. shorten
@@ -25,17 +23,20 @@
 </template>
 
 <script>
+import animation from "@/components/animation.vue";
 import normalizeUrl from "normalize-url";
 
 export default {
   name: "UrlShorten",
+  components: {
+    animation
+  },
   computed: {
     clipboardSupported: () =>
       navigator && navigator.clipboard && navigator.clipboard.readText
   },
   data() {
     return {
-      loading: true,
       msgClip: "_",
       msgForm: "",
       urlForm: ""
@@ -101,31 +102,6 @@ export default {
         ) !== null
       );
     }
-  },
-  mounted() {
-    const urlArr = window.location.href.split("#");
-    if (urlArr.length !== 2) {
-      this.loading = false;
-      return;
-    }
-
-    if (urlArr[1].length !== 4) {
-      this.loading = false;
-      return;
-    }
-
-    const id = urlArr[1];
-
-    fetch(`${process.env.VUE_APP_API_URL}/${id}`)
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) window.location.replace(res.url);
-        else this.loading = false;
-      })
-      .catch(err => {
-        console.log(err);
-        this.loading = false;
-      });
   }
 };
 </script>
@@ -181,45 +157,5 @@ input {
 
 #form-ui-wrapper {
   margin-top: 2em;
-}
-
-#loading-wrapper {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-[id|="loading-screen"] {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-$colors: #b48ead, #a3be8c, #5e81ac, #3b4252, #ebcb8b, #a3be8c, #b48ead, #4c566a,
-  #d08770, #81a1c1;
-
-@for $i from 1 through 5 {
-  $color: nth($colors, $i);
-  $rot: random(4) * 90;
-  #loading-screen-#{$i} {
-    background-color: $color;
-    transform: rotate(#{$rot}deg);
-    animation: turn-#{$i}
-      unquote(18 + random(5) + "s")
-      linear
-      unquote(random(3) / 10 + "s")
-      infinite;
-  }
-
-  @keyframes turn-#{$i} {
-    100% {
-      transform: rotate(#{($rot + 180) % 360}deg);
-    }
-  }
 }
 </style>
